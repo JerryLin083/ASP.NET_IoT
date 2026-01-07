@@ -4,6 +4,6 @@ namespace ASP.NET_IoT.Data
 {
     public class IoTAppContext: DbContext
     {
-        IoTAppContext(DbContextOptions<IoTAppContext> options) : base(options) { }
+        public IoTAppContext(DbContextOptions<IoTAppContext> options) : base(options) { }
     }
 }

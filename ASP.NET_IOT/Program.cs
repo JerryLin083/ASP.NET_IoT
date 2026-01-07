@@ -1,3 +1,4 @@
+using ASP.NET_IoT.BackgroundServices;
 using ASP.NET_IoT.Data;
 using ASP.NET_IoT.Hubs;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,9 @@ builder.Services.AddMemoryCache();
 
 //signalR
 builder.Services.AddSignalR();
+
+//MQTT background service
+builder.Services.AddHostedService<MqttWorker>();
 
 var app = builder.Build();
 
