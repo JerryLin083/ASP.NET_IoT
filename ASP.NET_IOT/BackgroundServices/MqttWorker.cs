@@ -1,4 +1,7 @@
-﻿using MQTTnet;
+﻿using ASP.NET_IoT.BackgroundServices.Service;
+using ASP.NET_IoT.Data;
+using Microsoft.Extensions.Caching.Memory;
+using MQTTnet;
 using System.Text;
 
 namespace ASP.NET_IoT.BackgroundServices
@@ -7,35 +10,35 @@ namespace ASP.NET_IoT.BackgroundServices
     {
         private readonly ILogger<MqttWorker> _logger;
         private readonly IMqttClient _mqttClient;
+        private readonly IConfiguration _configuration;
         private readonly MqttClientOptions _options;
+        private readonly IMqttHandler _mqttHandler;
 
-        public MqttWorker(ILogger<MqttWorker> logger)
+        public MqttWorker(ILogger<MqttWorker> logger, IConfiguration configuration, IMqttHandler mqttHandler)
         {
             _logger = logger;
+            _configuration = configuration;
+            _mqttHandler = mqttHandler;
 
             var factory = new MqttClientFactory();
             _mqttClient = factory.CreateMqttClient();
 
             _options = new MqttClientOptionsBuilder()
-                .WithTcpServer("broker.hivemq.com")
+                .WithTcpServer(_configuration["MQTT:Broker"])
                 .WithClientId($"AspNetCore_{Guid.NewGuid()}")
                 .Build();
+
 
             SetupEvents();
         }
 
-        private void SetupEvents() {
+        private  void SetupEvents() {
             // 1. handle receive message
-            _mqttClient.ApplicationMessageReceivedAsync += e =>
+            _mqttClient.ApplicationMessageReceivedAsync += async e =>
             {
                 string topic = e.ApplicationMessage.Topic;
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-                _logger.LogInformation($"Receive message! Topic: {topic}, Payload: {payload}");
-
-                //TODO: update cache and signalR broadcast
-
-                return Task.CompletedTask;
+                await _mqttHandler.HandleAsync(topic, payload);
             };
 
             // 2. auto subscribe topic
@@ -43,7 +46,7 @@ namespace ASP.NET_IoT.BackgroundServices
             {
                 _logger.LogInformation("Successfully connect to borker");
 
-                var topicFiler = new MqttTopicFilterBuilder().WithTopic("sensors/#").Build();
+                var topicFiler = new MqttTopicFilterBuilder().WithTopic("sensors/greenhouse/#").Build();
 
                 await _mqttClient.SubscribeAsync(topicFiler);
                 _logger.LogInformation("Subscribe: sensors/#");
