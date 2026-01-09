@@ -32,6 +32,9 @@ namespace ASP.NET_IoT.BackgroundServices.Service
 
             //TODO: update cache
 
+            //TODO: signalR send to clinet
+            await _hubContext.Clients.All.SendAsync("ReceiveReading", topic, payload);
+
             //TODO: task insert db
 
         }
