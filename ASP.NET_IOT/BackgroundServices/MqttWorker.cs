@@ -44,7 +44,7 @@ namespace ASP.NET_IoT.BackgroundServices
             {
                 _logger.LogInformation("Successfully connect to borker");
 
-                var topicFiler = new MqttTopicFilterBuilder().WithTopic("sensors/greenhouse/#").Build();
+                var topicFiler = new MqttTopicFilterBuilder().WithTopic(_configuration["MQTT:Topic"]).Build();
 
                 await _mqttClient.SubscribeAsync(topicFiler);
                 _logger.LogInformation("Subscribe: sensors/#");

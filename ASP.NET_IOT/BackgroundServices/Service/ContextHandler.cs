@@ -1,6 +1,5 @@
 ﻿using ASP.NET_IoT.Data;
 using ASP.NET_IoT.Models.Mqtt;
-using System.Text.Json;
 
 namespace ASP.NET_IoT.BackgroundServices.Service
 {
@@ -15,10 +14,17 @@ namespace ASP.NET_IoT.BackgroundServices.Service
             _logger = logger;
         }
 
-        public async Task InsertPayload(MqttMessage mqttMessage)
+        public async Task InsertBatch(List<MqttMessage> mqttMessages)
         {
-            //TODO: insert payload to db
-            _logger.LogInformation($"payload: {mqttMessage.RowPayload}, inserted");
+            // TODO: actual database insertion using EF Core
+            _logger.LogInformation($"[Batch Process] Received {mqttMessages.Count} messages for processing.");
+            
+            foreach (var mqttMessage in mqttMessages)
+            {
+                _logger.LogDebug($"Processing message: Topic={mqttMessage.RowTopic}, Payload={mqttMessage.RowPayload}");
+            }
+
+            await Task.CompletedTask;
         }
     }
 }

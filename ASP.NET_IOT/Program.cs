@@ -28,8 +28,10 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSignalR();
 
 //MQTT background service
+builder.Services.AddSingleton<IChannelService, ChannelService>();
 builder.Services.AddSingleton<IMqttHandler, MqttHandler>();
 builder.Services.AddHostedService<MqttWorker>();
+builder.Services.AddHostedService<MqttDbBatchService>();
 builder.Services.AddScoped<IContextHandler, ContextHandler>();
 
 var app = builder.Build();

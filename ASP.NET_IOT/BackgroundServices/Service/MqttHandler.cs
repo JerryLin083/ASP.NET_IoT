@@ -9,17 +9,16 @@ namespace ASP.NET_IoT.BackgroundServices.Service
     public class MqttHandler : IMqttHandler
     {
         private readonly ILogger<MqttHandler> _logger;
-        private readonly IServiceScopeFactory _scopeFactory;
         private readonly IMemoryCache _cache;
-        private IHubContext<SensorHub> _hubContext;
+        private readonly IHubContext<SensorHub> _hubContext;
+        private readonly IChannelService _channelService;
 
-
-        public MqttHandler(IServiceScopeFactory scopeFactory, IMemoryCache cache, IHubContext<SensorHub> hubContext, ILogger<MqttHandler> logger)
+        public MqttHandler(IMemoryCache cache, IHubContext<SensorHub> hubContext, ILogger<MqttHandler> logger, IChannelService channelService)
         {
-            _scopeFactory = scopeFactory;
             _cache = cache;
             _hubContext = hubContext;
             _logger = logger;
+            _channelService = channelService;
         }
 
         public async Task HandleAsync(string topic, string payload)
@@ -43,19 +42,18 @@ namespace ASP.NET_IoT.BackgroundServices.Service
             await _hubContext.Clients.All.SendAsync("ReceiveReading", topic, payload);
 
             //TODO: task insert db
-            _ = Task.Run(async () =>
+            try
             {
-                try
+                //send mqtt message to channel
+                if (!_channelService.TryWrite(mqttMessage))
                 {
-                    using var scope = _scopeFactory.CreateScope();
-                    var contextHandler = scope.ServiceProvider.GetRequiredService<IContextHandler>();
-                    await contextHandler.InsertPayload(mqttMessage);
-                }catch(Exception ex)
-                {
-                    _logger.LogError(ex, "Error thorw while insert to DB");
+                    _logger.LogWarning($"Failed to send mqtt message to channel");
                 }
-            });
-
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error thorw while insert to DB");
+            }
         }
 
         private static SensorTopic ParseTopic(string topic)

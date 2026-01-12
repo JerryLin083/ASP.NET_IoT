@@ -4,6 +4,6 @@ namespace ASP.NET_IoT.BackgroundServices.Service
 {
     public interface IContextHandler
     {
-        Task InsertPayload(MqttMessage mqttMessage);
+        Task InsertBatch(List<MqttMessage> mqttMessages);
     }
 }
