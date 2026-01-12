@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace ASP.NET_IoT.BackgroundServices.Service
 {
-    public class MqttHandler: IMqttHandler
+    public class MqttHandler : IMqttHandler
     {
         private readonly ILogger<MqttHandler> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
@@ -23,12 +23,7 @@ namespace ASP.NET_IoT.BackgroundServices.Service
 
         public async Task HandleAsync(string topic, string payload)
         {
-            using var scope = _scopeFactory.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<IoTAppContext>();
-
-
             //TODO: parse topic and payload
-            _logger.LogInformation($"Topic: {topic}, Payload: {payload}");
 
             //TODO: update cache
 
@@ -36,6 +31,18 @@ namespace ASP.NET_IoT.BackgroundServices.Service
             await _hubContext.Clients.All.SendAsync("ReceiveReading", topic, payload);
 
             //TODO: task insert db
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    using var scope = _scopeFactory.CreateScope();
+                    var contextHandler = scope.ServiceProvider.GetRequiredService<IContextHandler>();
+                    await contextHandler.InsertPayload(payload);
+                }catch(Exception ex)
+                {
+                    _logger.LogError(ex, "Error thorw while insert to DB");
+                }
+            });
 
         }
     }

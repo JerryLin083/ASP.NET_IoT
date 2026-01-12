@@ -3,8 +3,8 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/sensorHub").build();
 
 connection.on("ReceiveReading", function (topic, payload) {
-    console.log(topic);
-    console.log(payload);
+    let element = document.getElementById("sensor-reading");
+    element.textContent = `${topic}, ${payload}`;
 });
 
 connection.start().then(function () {

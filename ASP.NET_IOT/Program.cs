@@ -30,6 +30,7 @@ builder.Services.AddSignalR();
 //MQTT background service
 builder.Services.AddSingleton<IMqttHandler, MqttHandler>();
 builder.Services.AddHostedService<MqttWorker>();
+builder.Services.AddScoped<IContextHandler, ContextHandler>();
 
 var app = builder.Build();
 
