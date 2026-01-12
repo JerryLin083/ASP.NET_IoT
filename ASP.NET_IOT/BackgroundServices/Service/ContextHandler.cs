@@ -1,8 +1,10 @@
 ﻿using ASP.NET_IoT.Data;
+using ASP.NET_IoT.Models.Mqtt;
+using System.Text.Json;
 
 namespace ASP.NET_IoT.BackgroundServices.Service
 {
-    public class ContextHandler: IContextHandler
+    public class ContextHandler : IContextHandler
     {
         private readonly ILogger<ContextHandler> _logger;
         private readonly IoTAppContext _context;
@@ -13,11 +15,10 @@ namespace ASP.NET_IoT.BackgroundServices.Service
             _logger = logger;
         }
 
-        public async Task InsertPayload(string payload)
+        public async Task InsertPayload(MqttMessage mqttMessage)
         {
             //TODO: insert payload to db
-            _logger.LogInformation($"payload: {payload}, inserted");
+            _logger.LogInformation($"payload: {mqttMessage.RowPayload}, inserted");
         }
-
     }
 }

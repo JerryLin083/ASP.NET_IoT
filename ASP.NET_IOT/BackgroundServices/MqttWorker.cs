@@ -1,6 +1,4 @@
 ﻿using ASP.NET_IoT.BackgroundServices.Service;
-using ASP.NET_IoT.Data;
-using Microsoft.Extensions.Caching.Memory;
 using MQTTnet;
 using System.Text;
 
