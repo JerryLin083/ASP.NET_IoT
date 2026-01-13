@@ -10,7 +10,7 @@ namespace ASP.NET_IoT.BackgroundServices
         private readonly ILogger<MqttDbBatchService> _logger;
         private readonly List<MqttMessage> _mqttMessages = [];
 
-        public MqttDbBatchService(IChannelService channelService, IServiceScopeFactory scopeFactory, ILogger<MqttDbBatchService> logger, int capacity = 100)
+        public MqttDbBatchService(IChannelService channelService, IServiceScopeFactory scopeFactory, ILogger<MqttDbBatchService> logger)
         {
             _channelService = channelService;
             _scopeFactory = scopeFactory;

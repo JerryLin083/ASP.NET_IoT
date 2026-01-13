@@ -47,7 +47,7 @@ namespace ASP.NET_IoT.BackgroundServices
                 var topicFiler = new MqttTopicFilterBuilder().WithTopic(_configuration["MQTT:Topic"]).Build();
 
                 await _mqttClient.SubscribeAsync(topicFiler);
-                _logger.LogInformation("Subscribe: sensors/#");
+                _logger.LogInformation($"Subscribe: {_configuration["MQTT:Topic"]}");
             };
 
             // 3.handle disconnect
