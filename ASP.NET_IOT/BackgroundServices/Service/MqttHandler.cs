@@ -23,7 +23,7 @@ namespace ASP.NET_IoT.BackgroundServices.Service
 
         public async Task HandleAsync(string topic, string payload)
         {
-            //TODO: parse topic and payload
+            //parse topic and payload
             var sensorTopic = ParseTopic(topic);
             var sensorPayload = ParsePayload(payload);
 
@@ -35,13 +35,13 @@ namespace ASP.NET_IoT.BackgroundServices.Service
 
             MqttMessage mqttMessage = new MqttMessage(topic, payload, sensorTopic, sensorPayload);
 
-            //TODO: update cache
+            //update cache
             _cache.Set($"latest_{sensorTopic.Area}_${sensorTopic.Zone}", mqttMessage.SensorPayload);
 
-            //TODO: signalR send to clinet
+            //signalR send to clinet
             await _hubContext.Clients.All.SendAsync("ReceiveReading", topic, payload);
 
-            //TODO: task insert db
+            //task insert db
             try
             {
                 //send mqtt message to channel
