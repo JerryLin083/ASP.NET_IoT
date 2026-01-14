@@ -35,24 +35,22 @@ namespace ASP.NET_IoT.BackgroundServices.Service
 
             MqttMessage mqttMessage = new MqttMessage(topic, payload, sensorTopic, sensorPayload);
 
-            //update cache
-            _cache.Set($"latest_{sensorTopic.Area}_${sensorTopic.Zone}", mqttMessage.SensorPayload);
+            // 1. Update In-Memory Cache with expiration to prevent memory bloat
+            var cacheKey = $"latest_{sensorTopic.Area}_{sensorTopic.Zone}";
+            var cacheOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromMinutes(30))
+                .SetAbsoluteExpiration(TimeSpan.FromHours(1)) // Hard limit to refresh metadata
+                .SetPriority(CacheItemPriority.High);
 
-            //signalR send to clinet
+            _cache.Set(cacheKey, mqttMessage.SensorPayload, cacheOptions);
+
+            // 2. Notify clients via SignalR (Real-time dashboard)
             await _hubContext.Clients.All.SendAsync("ReceiveReading", topic, payload);
 
-            //task insert db
-            try
+            // 3. Queue for Batch Database Insertion
+            if (!_channelService.TryWrite(mqttMessage))
             {
-                //send mqtt message to channel
-                if (!_channelService.TryWrite(mqttMessage))
-                {
-                    _logger.LogWarning($"Failed to send mqtt message to channel");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error thorw while insert to DB");
+                _logger.LogWarning("Channel full: Mqtt message dropped from DB queue. Topic: {Topic}", topic);
             }
         }
 
