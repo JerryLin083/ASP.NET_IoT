@@ -12,7 +12,7 @@
         public MqttMessage(string rowTopic, string rowPayload, SensorTopic sensorTopic, SensorPayload sensorPayload)
         {
             RowTopic = rowTopic;
-            RowPayload = rowPayload;
+            RowPayload = rowPayload.TrimEnd('\0');
             SensorTopic = sensorTopic;
             SensorPayload = sensorPayload;
         }

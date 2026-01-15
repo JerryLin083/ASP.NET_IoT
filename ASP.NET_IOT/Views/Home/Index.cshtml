@@ -1,13 +1,31 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "IoT Control Panel";
 }
 
-<div class="text-center">
-    <h2 class="display-4">Greenhouse reading</h2>
-    <p id="sensor-reading"></p>
+<div class="text-center py-5 mt-5">
+    <h1 class="display-4 fw-bold">IoT Control Panel</h1>
+    <p class="lead">Enter Area and Zone to monitor your sensors in real-time.</p>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form asp-controller="Dashboard" asp-action="Index" method="get">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="area" id="areaInput" placeholder="Area" required>
+                            <label for="areaInput">Area (e.g., Farm)</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="zone" id="zoneInput" placeholder="Zone" required>
+                            <label for="zoneInput">Zone (e.g., Greenhouse)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">Enter Dashboard</button>
+                    </form>
+                </div>
+            </div>
+            <div class="mt-4 text-muted small">
+                <i class="bi bi-info-circle"></i> MQTT Topic pattern: <code>sensors/{area}/{zone}</code>
+            </div>
+        </div>
+    </div>
 </div>
-
-@section Scripts{
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/index.js"></script>
-}

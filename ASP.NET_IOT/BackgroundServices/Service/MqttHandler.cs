@@ -45,7 +45,7 @@ namespace ASP.NET_IoT.BackgroundServices.Service
             _cache.Set(cacheKey, mqttMessage.SensorPayload, cacheOptions);
 
             // 2. Notify clients via SignalR (Real-time dashboard)
-            await _hubContext.Clients.All.SendAsync("ReceiveReading", topic, payload);
+            await _hubContext.Clients.All.SendAsync("ReceiveReading", mqttMessage.RowTopic, mqttMessage.RowPayload);
 
             // 3. Queue for Batch Database Insertion
             if (!_channelService.TryWrite(mqttMessage))
