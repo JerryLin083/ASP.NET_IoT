@@ -23,6 +23,7 @@ namespace ASP.NET_IoT.BackgroundServices
 
             _options = new MqttClientOptionsBuilder()
                 .WithTcpServer(_configuration["MQTT:Broker"])
+                .WithProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion.V311)
                 .WithClientId($"AspNetCore_{Guid.NewGuid()}")
                 .Build();
 
