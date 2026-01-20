@@ -34,3 +34,6 @@ ASP.NET Core, PostgreSQL, EF Core, MQTTnet, SignalR, In-Memory Cache
 - **MqttDbBatchService**: 從通道讀取訊息，批次寫入資料庫以進行歷史存檔。
 
 - **Database (PostgreSQL)**: 永久儲存所有感測器數據。
+
+#DEMO
+<img src="https://github.com/JerryLin083/ASP.NET_IoT/blob/master/demo/demo.gif" alt="demo" width="600">
