@@ -35,5 +35,5 @@ ASP.NET Core, PostgreSQL, EF Core, MQTTnet, SignalR, In-Memory Cache
 
 - **Database (PostgreSQL)**: 永久儲存所有感測器數據。
 
-#DEMO
+<h2>DEMO</h2>
 <img src="https://github.com/JerryLin083/ASP.NET_IoT/blob/master/demo/demo.gif" alt="demo" width="600">
